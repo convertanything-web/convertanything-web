@@ -1,0 +1,1 @@
+# Add ADSENSE_PUBLISHER_ID=pub-xxxxxxxxxxxxxxxx to publish Google AdSense ads.txt.

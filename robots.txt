@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://convertanything-web.github.io/sitemap.xml
