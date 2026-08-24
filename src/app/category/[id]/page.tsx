@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AdSlot from "@/components/AdSlot";
 import { conversionCategories, slugForConversion } from "@/lib/conversions";
 import { performConversion, formatNumber } from "@/lib/engine";
+import { absoluteUrl } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -25,6 +27,19 @@ export async function generateMetadata({ params }: PageProps<"/category/[id]">):
     title: `${category.name} conversions`,
     description: `${category.description} Browse ${Object.keys(category.units).length} ${category.name.toLowerCase()} units and all compatible conversion pages.`,
     alternates: { canonical: `/category/${category.id}` },
+    keywords: [
+      `${category.name} conversions`,
+      `${category.name.toLowerCase()} converter`,
+      "unit converter",
+      "conversion calculator",
+      "conversion table",
+    ],
+    openGraph: {
+      title: `${category.name} conversions`,
+      description: category.description,
+      url: absoluteUrl(`/category/${category.id}`),
+      type: "website",
+    },
   };
 }
 
@@ -35,9 +50,36 @@ export default async function CategoryPage({ params }: PageProps<"/category/[id]
   if (!category) notFound();
 
   const units = Object.values(category.units);
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "ConvertAnything",
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: `${category.name} conversions`,
+        item: absoluteUrl(`/category/${category.id}`),
+      },
+    ],
+  };
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `${category.name} conversions`,
+    description: category.description,
+    url: absoluteUrl(`/category/${category.id}`),
+  };
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
       <nav className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link href="/" className="font-semibold text-slate-950">
@@ -59,6 +101,7 @@ export default async function CategoryPage({ params }: PageProps<"/category/[id]
             </div>
           ))}
         </div>
+        <AdSlot className="mt-8" />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6">

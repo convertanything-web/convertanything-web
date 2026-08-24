@@ -1,7 +1,9 @@
 import Link from "next/link";
+import AdSlot from "@/components/AdSlot";
 import ConversionSearch from "@/components/ConversionSearch";
 import { conversionCategories, highValuePairs, slugForConversion } from "@/lib/conversions";
 import { getUnitLabel } from "@/lib/engine";
+import { absoluteUrl } from "@/lib/seo";
 
 const faqs = [
   {
@@ -44,10 +46,35 @@ export default function Home() {
       },
     })),
   };
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "ConvertAnything",
+    url: absoluteUrl("/"),
+    potentialAction: {
+      "@type": "SearchAction",
+      target: absoluteUrl("/convert/{search_term_string}"),
+      "query-input": "required name=search_term_string",
+    },
+  };
+  const appJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "ConvertAnything",
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }} />
 
       <section className="mx-auto flex min-h-[62vh] w-full max-w-5xl flex-col justify-center px-4 py-16 sm:px-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">ConvertAnything</p>
@@ -93,6 +120,7 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        <AdSlot className="mt-8" />
       </section>
 
       <section className="border-t border-slate-200 bg-white">
